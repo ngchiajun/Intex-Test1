@@ -71,15 +71,13 @@ namespace Intex_Test1.Controllers
         public IHttpActionResult Create(Image newImage)
         {
             try
-            {
-                //var data = db.Images.OrderByDescending(s => s.id).FirstOrDefault();
+            {             
             var data = db.Images.ToList();
             var count = data.Count();
             int newdata = (int)Math.Ceiling((count + 1) / 9.0);
             newImage.requestCount = 0;
             newImage.page = newdata;
-               
-                   
+                                  
             db.Images.Add(newImage);
             db.SaveChanges();
             return Ok("babi");
