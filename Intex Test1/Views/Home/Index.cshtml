@@ -1,0 +1,48 @@
+﻿<div class="jumbotron">
+    <h2>Create</h2>
+
+
+    <h4>Image</h4>
+    <hr />
+    <div>
+        <label>Name</label>
+        @Html.TextBox("name")
+    </div>
+
+    <div>
+        <label>Url</label>
+        @Html.TextBox("url")
+    </div>
+
+    <div>
+        <button id="btnAdd">Add</button>
+
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+
+    $("#btnAdd").click(function () {
+
+        var Meme = {
+            "Name": $("#name").val(),
+            "Url": $("#url").val(),
+        };
+
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:44335/api/meme/create',
+            data: JSON.stringify(newImage),
+            contentType: "application/json;charset=utf-8",
+            processData: true,
+            success: function (data, status, xhr) {
+                alert("The result is : " + status);
+            },
+            error: function (xhr) {
+                alert(xhr.responseText);
+            }
+        });
+    });
+</script>

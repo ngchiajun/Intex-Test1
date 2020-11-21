@@ -1,0 +1,8 @@
+﻿{
+  "Data": {
+    "CommandAPIConnection": {
+      "ConnectionString": "Server=DESKTOP-O1BV5NF;Database=IntexDB;Trusted_Connection=True"
+    }
+  }
+
+}
