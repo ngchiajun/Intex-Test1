@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using Intex_Test1.Models;
 using System.Data.Entity.Validation;
+using Intex_Test1.Dtos;
 
 namespace Intex_Test1.Controllers
 {
@@ -13,18 +14,25 @@ namespace Intex_Test1.Controllers
     public class MemeController : ApiController
     {
         // private MemeContext db = new MemeContext();
-        private IntextDBEntities2 db = new IntextDBEntities2();
+        private IntextDBEntities3 db = new IntextDBEntities3();
 
         public IHttpActionResult Get()
         {
-            var data = db.Images.ToList();
-            foreach (var item in data)
+            try
             {
-                item.requestCount += 1;
+                var data = db.Images.ToList();
+                foreach (var item in data)
+                {
+                    item.requestCount += 1;
+                }
+                db.SaveChanges();
+
+                return Ok(data);
             }
-            db.SaveChanges();
-            return Ok(data); 
-          
+            catch(Exception ex)
+            {
+                return BadRequest(ex.ToString()); // try publish again
+            }
         }
         
         [HttpGet]
@@ -68,20 +76,24 @@ namespace Intex_Test1.Controllers
 
         [HttpPost]
         [Route("create")]
-        public IHttpActionResult Create(Image newImage)
+        public IHttpActionResult Create(DataDto data)
         {
             try
-            {             
-            var data = db.Images.ToList();
-            var count = data.Count();
-            int newdata = (int)Math.Ceiling((count + 1) / 9.0);
-            newImage.requestCount = 0;
-            newImage.page = newdata;
-                                  
-            db.Images.Add(newImage);
-            db.SaveChanges();
-            return Ok("babi");
+            {
+                foreach (ImageDto imageDto in data.Data)
+                {
+                    Image newImage = new Image();
 
+                    newImage.name = imageDto.Name;
+                    newImage.url = imageDto.Url;
+                    newImage.page = GetPageNo();
+                    newImage.requestCount = 0;
+                        
+                    db.Images.Add(newImage);
+                    db.SaveChanges();
+                }
+
+                return Ok("Created");
             }
             catch (DbEntityValidationException e)
             {
@@ -99,18 +111,15 @@ namespace Intex_Test1.Controllers
             }
         }
 
-
-
-
-        [HttpGet]
-        [Route("all")]
-        public string[] all()
+        // Extract the calculation of page
+        private int GetPageNo()
         {
-            return new string[]
-            {
-                "c",
-                "d"
-            };
+            // Config number of images per page in DB
+            int noOfImgPerPage = Int32.Parse(db.Configurations.Where(c => c.id == "NOI01").Select(c => c.configVal).ToList()[0]);
+            int count = db.Images.ToList().Count();
+            int pageNo = (int)Math.Ceiling((count + 1) / (double)noOfImgPerPage);
+
+            return pageNo;
         }
     }
 }

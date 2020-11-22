@@ -13,10 +13,10 @@ namespace Intex_Test1.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class IntextDBEntities2 : DbContext
+    public partial class IntextDBEntities3 : DbContext
     {
-        public IntextDBEntities2()
-            : base("name=IntextDBEntities2")
+        public IntextDBEntities3()
+            : base("name=IntextDBEntities3")
         {
         }
     
@@ -25,6 +25,7 @@ namespace Intex_Test1.Models
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Configuration> Configurations { get; set; }
         public virtual DbSet<Image> Images { get; set; }
     }
 }
